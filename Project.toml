@@ -1,6 +1,6 @@
 name = "Ranges"
 uuid = "eb7db99b-64ae-4b81-85c2-3439b6569b78"
-authors = ["Mark Kittisopikul <kittisopikulm@janelia.hhmi.org> and contributors"]
+authors = ["Mark Kittisopikul <markkitt@gmail.com> and contributors"]
 version = "0.1.0"
 
 [compat]
