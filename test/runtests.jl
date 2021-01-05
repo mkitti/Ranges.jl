@@ -81,6 +81,10 @@ end
             for sym3 in s2
                 @test range(Symbol(sym,sym2,sym3), dict[sym], dict[sym2], dict[sym3]) == range(1, 5; length=5)
                 @test range(Symbol(sym,sym2,sym3), dict[sym], dict[sym2], dict[sym3]) == range(:bels; sym => dict[sym], sym2 => dict[sym2], sym3 => dict[sym3])
+                if sym === :l
+                    @test range(Symbol(sym,sym2,sym3), dict[sym], dict[sym2]) == range(Symbol(sym,sym2), dict[sym], dict[sym2])
+                    @test range(Symbol(sym,sym2,sym3), dict[sym]) == range(sym, dict[sym])
+                end
             end
         end
     end

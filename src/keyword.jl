@@ -27,7 +27,8 @@ Defaults:
 [e]nd: typemax or floatmax of b
 [s]tep: 1
 """
-Base.range(s::Symbol, args... ; kwargs...) = range(Val(s), args... ; kwargs...)
+Base.range(s::Symbol, args... ; kwargs...) = Base.range(Val(s), args... ; kwargs...)
+### THE ABOVE LINE OF CODE IS CRITICAL FOR THE FUNCTIONALITY BELOW ###
 
 Base.range(::Val{:bels}; b=nothing, e=nothing, l=nothing, s=nothing) =
     Base._range(b, s, e, l)
@@ -48,70 +49,70 @@ Base.range(::Val{:be}, b, e) = b:e
 Base.range(::Val{:bl}, b, l) = range(b; length=l)
 Base.range(::Val{:bs}, b, s) = b:s:typemax(s)
 
-Base.range(::Val{:el}, e, l) = range(e-l+1, e; length=l)
-Base.range(::Val{:es}, e, s) = oneunit(e):s:e
+Base.range(::Val{:el}, e, l=e) = range(e-l+1, e; length=l)
+Base.range(::Val{:es}, e, s=nothing) = oneunit(e):s:e
 
-Base.range(::Val{:ls}, l, s) = range(1; step=s, length=l)
+Base.range(::Val{:ls}, l, s=nothing) = range(1; step=s, length=l)
 
 Base.range(::Val{:bs}, b, s::AbstractFloat) = b:s:floatmax(s)
 
 # Three argument, bels order (+4)
 
-Base.range(::Val{:bel}, b, e, l) = Base.range(b, e; length=l)
-Base.range(::Val{:bes}, b, e, s) = Base.range(b, e; step=s)
-Base.range(::Val{:bls}, b, l, s) = Base.range(b; length=l, step=s)
-Base.range(::Val{:els}, e, l, s) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:bel}, b, e, l=e) = Base.range(b, e; length=l)
+Base.range(::Val{:bes}, b, e, s=nothing) = Base.range(b, e; step=s)
+Base.range(::Val{:bls}, b, l, s=nothing) = Base.range(b; length=l, step=s)
+Base.range(::Val{:els}, e, l=e, s=nothing) = Base.range(e - (l-1)*s; length=l, step=s)
 
 # Two argument, reversed order
 
-Base.range(::Val{:eb}, e, b) = b:e
-Base.range(::Val{:lb}, l, b) = range(b; length=l)
-Base.range(::Val{:sb}, s, b) = b:s:typemax(s)
+Base.range(::Val{:eb}, e, b=1) = b:e
+Base.range(::Val{:lb}, l, b=1) = range(b; length=l)
+Base.range(::Val{:sb}, s, b=1) = b:s:typemax(s)
 
-Base.range(::Val{:le}, l, e) = Base.range(e-l+1, e; length=l)
+Base.range(::Val{:le}, l, e=l) = Base.range(e-l+1, e; length=l)
 Base.range(::Val{:se}, s, e) = oneunit(e):s:e
 
 Base.range(::Val{:sl}, s, l) = Base.range(1; step=s, length=l)
 
 # Three argument, swap last two (+4)
 
-Base.range(::Val{:ble}, b, l, e) = Base.range(b, e; length=l)
+Base.range(::Val{:ble}, b, l, e=nothing) = Base.range(b, e; length=l)
 Base.range(::Val{:bse}, b, s, e) = Base.range(b, e; step=s)
 Base.range(::Val{:bsl}, b, s, l) = Base.range(b; length=l, step=s)
-Base.range(::Val{:esl}, e, s, l) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:esl}, e, s=nothing, l=e) = Base.range(e - (l-1)*s; length=l, step=s)
 
 # Three argument, end first, ebls (+4)
 
-Base.range(::Val{:ebl}, e, b, l) = Base.range(b, e; length=l)
-Base.range(::Val{:ebs}, e, b, s) = Base.range(b, e; step=s)
+Base.range(::Val{:ebl}, e, b=1, l=e) = Base.range(b, e; length=l)
+Base.range(::Val{:ebs}, e, b=1, s=nothing) = Base.range(b, e; step=s)
 #Base.range(::Val{:bls}, b, l, s) = Base.range(b; length=l, step=s)
 #Base.range(::Val{:els}, e, l, s) = Base.range(e - (l-1)*s; length=l, step=s)
 
-Base.range(::Val{:elb}, e, l, b) = Base.range(b, e; length=l)
-Base.range(::Val{:esb}, e, s, b) = Base.range(b, e; step=s)
+Base.range(::Val{:elb}, e, l=e, b=1) = Base.range(b, e; length=l)
+Base.range(::Val{:esb}, e, s=nothing, b=1) = Base.range(b, e; step=s)
 #Base.range(::Val{:bsl}, b, s, l) = Base.range(b; length=l, step=s)
 #Base.range(::Val{:esl}, e, s, l) = Base.range(e - (l-1)*s; length=l, step=s)
 
 # Three argument, length first (+6)
 
-Base.range(::Val{:lbe}, l, b, e) = Base.range(b, e; length=l)
+Base.range(::Val{:lbe}, l, b=1, e=nothing) = Base.range(b, e; length=l)
 #Base.range(::Val{:bes}, b, e, s) = Base.range(b, e; step=s)
-Base.range(::Val{:lbs}, l, b, s) = Base.range(b; length=l, step=s)
-Base.range(::Val{:les}, l, e, s) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:lbs}, l, b=1, s=nothing) = Base.range(b; length=l, step=s)
+Base.range(::Val{:les}, l, e=l, s=1) = Base.range(e - (l-1)*s; length=l, step=s)
 
-Base.range(::Val{:leb}, l, e, b) = Base.range(b, e; length=l)
+Base.range(::Val{:leb}, l, e=l, b=1) = Base.range(b, e; length=l)
 #Base.range(::Val{:bes}, b, s, e) = Base.range(b, e; step=s)
-Base.range(::Val{:lsb}, l, s, b) = Base.range(b; length=l, step=s)
-Base.range(::Val{:lse}, l, s, e) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:lsb}, l, s=nothing, b=1) = Base.range(b; length=l, step=s)
+Base.range(::Val{:lse}, l, s=1, e=l) = Base.range(e - (l-1)*s; length=l, step=s)
 
 # Three argument, step first (+6)
 
 #Base.range(::Val{:bel}, b, e, l) = Base.range(b, e; length=l)
 Base.range(::Val{:sbe}, s, b, e) = Base.range(b, e; step=s)
 Base.range(::Val{:sbl}, s, b, l) = Base.range(b; length=l, step=s)
-Base.range(::Val{:sel}, s, e, l) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:sel}, s, e, l=e) = Base.range(e - (l-1)*s; length=l, step=s)
 
 #Base.range(::Val{:bel}, b, l, e) = Base.range(b, e; length=l)
 Base.range(::Val{:seb}, s, e, b) = Base.range(b, e; step=s)
 Base.range(::Val{:slb}, s, l, b) = Base.range(b; length=l, step=s)
-Base.range(::Val{:sle}, s, l, e) = Base.range(e - (l-1)*s; length=l, step=s)
+Base.range(::Val{:sle}, s, l, e=l) = Base.range(e - (l-1)*s; length=l, step=s)

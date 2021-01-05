@@ -33,5 +33,16 @@ Return a range with the `start` and `stop` but with the specified step
 Base.step(r::Pair, s) = Base.range(first(r), last(r), step=s)
 Base.step(start, stop, step) = Base.range(start, stop; step=step)
 
+"""
+    first(r::AbstractRange, f)
+
+Modify range with a new `start` element. Does not modify `end` or `step`.
+"""
 Base.first(r::AbstractRange, f) = Base.range(f, last(r), step=step(r))
+
+"""
+    last(r::AbstractRange, l)
+
+Modify range with a new last element. Does not change `start` or `step`.
+"""
 Base.last(r::AbstractRange, l) = Base.range(first(r), l, step=step(r))
