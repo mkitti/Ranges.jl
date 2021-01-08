@@ -26,11 +26,12 @@ import Base: (:)
 (:)(start::T, ::Step{1}, stop::T) where T<:Real = start:stop
 (:)(::Step{1}, start, stop) = start:stop
 
-Base.range(start, stop, ::Length{length}) = Base._range(start, nothing, stop, length)
-Base.range(start, stop, ::Step{step}) = Base._range(start, step, stop, nothing)
+Base.range(start, stop, ::Length{length}) where length = Base._range(start, nothing, stop, length)
+Base.range(start, stop, ::Step{step}) where step = Base._range(start, step, stop, nothing)
+Base.range(start, stop, ::Step{1}) where step = Base._range(start, nothing, stop, nothing)
 
-Base.range(::Length{length}, start, stop) = Base._range(start, nothing, stop, length)
-Base.range(start, ::Step{step}, stop) = Base._range(start, step, stop, nothing)
+Base.range(::Length{length}, start, stop) where length = Base._range(start, nothing, stop, length)
+Base.range(start, ::Step{1}, stop) where step = Base._range(start, nothing, stop, nothing)
 
 # Use step and length methods to produce a new range with modifications
 
