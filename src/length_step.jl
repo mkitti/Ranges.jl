@@ -1,4 +1,4 @@
-# Length and Step concept from Andrés Riedemann and Mason Potter
+# Length and Step concept from Andrés Riedemann and Mason Protter
 
 struct Length{length,T <: Union{Nothing,Integer} }
     Length(value::T) where T = new{value,T}()
