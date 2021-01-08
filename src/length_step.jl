@@ -1,3 +1,37 @@
+# Length and Step concept from Andrés Riedemann and Mason Potter
+
+struct Length{length,T <: Union{Nothing,Integer} }
+    Length(value::T) where T = new{value,T}()
+end
+value(::Length{value}) = value
+
+struct Step{step,T}
+    Step(value::T) where T = new{value,T}()
+end
+value(::Step{value}) = value
+
+import Base.:
+
+(:)(start, stop, ::Length{length}) where length = Base._range(start, nothing, stop, length)
+(:)(start::T, ::Length{length}, stop::T) where T<:Real where length = Base._range(start, nothing, stop, length)
+(:)(::Length{length}, start, stop) where length = Base._range(start, nothing, stop, length)
+
+(:)(start, stop, ::Step{step}) where step = start:step:stop
+(:)(start::T, ::Step{step}, stop::T) where T<:Real where step = start:step:stop
+(:)(::Step{step}, start, stop) where step = start:step:stop
+
+(:)(start, stop, ::Step{1}) = start:stop
+(:)(start::T, ::Step{1}, stop::T) where T<:Real = start:stop
+(:)(::Step{1}, start, stop) = start:stop
+
+Base.range(start, stop, ::Length{length}) = Base._range(start, nothing, stop, length)
+Base.range(start, stop, ::Step{step}) = Base._range(start, step, stop, nothing)
+
+Base.range(start, stop, ::Length{length}) = Base._range(start, nothing, stop, length)
+Base.range(start, ::Step{step}, stop) = Base._range(start, step, stop, nothing)
+
+# Use step and length methods to produce a new range with modifications
+
 """
     length(r::AbstractRange, len)
 
