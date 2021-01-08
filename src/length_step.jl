@@ -1,5 +1,7 @@
 # Length and Step concept from Andrés Riedemann and Mason Protter
 
+export Length, Step
+
 struct Length{length,T <: Union{Nothing,Integer} }
     Length(value::T) where T = new{value,T}()
 end
@@ -10,7 +12,7 @@ struct Step{step,T}
 end
 value(::Step{value}) = value
 
-import Base.:
+import Base: (:)
 
 (:)(start, stop, ::Length{length}) where length = Base._range(start, nothing, stop, length)
 (:)(start::T, ::Length{length}, stop::T) where T<:Real where length = Base._range(start, nothing, stop, length)
@@ -27,7 +29,7 @@ import Base.:
 Base.range(start, stop, ::Length{length}) = Base._range(start, nothing, stop, length)
 Base.range(start, stop, ::Step{step}) = Base._range(start, step, stop, nothing)
 
-Base.range(start, stop, ::Length{length}) = Base._range(start, nothing, stop, length)
+Base.range(::Length{length}, start, stop) = Base._range(start, nothing, stop, length)
 Base.range(start, ::Step{step}, stop) = Base._range(start, step, stop, nothing)
 
 # Use step and length methods to produce a new range with modifications
