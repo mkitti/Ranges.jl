@@ -2,36 +2,70 @@
 
 export Length, Step
 
-struct Length{length,T <: Union{Nothing,Integer} }
-    Length(value::T) where T = new{value,T}()
+struct Length{T <: Union{Nothing,Integer} }
+    length::T
 end
-value(::Length{value}) = value
+Length(value::T) where T = Length{T}(value)
+value(length::Length{T}) where T = length.length
+Base.length(length::Length{T}) where T = length.length
 
-struct Step{step,T}
-    Step(value::T) where T = new{value,T}()
+struct Step{T}
+    step::T
+    Step(value::T) where T = isone(value) ? new{Nothing}(nothing) : Step{T}(value)
+    Step{T}(value::T) where T = new{T}(value)
 end
-value(::Step{value}) = value
+value(step::Step{T}) where T = step.step
+Base.step(step::Step{T}) where T = step.step
 
-import Base: (:)
+AnyNothing = (Any, Nothing)
 
-(:)(start, stop, ::Length{length}) where length = Base._range(start, nothing, stop, length)
-(:)(start::T, ::Length{length}, stop::T) where T<:Real where length = Base._range(start, nothing, stop, length)
-(:)(::Length{length}, start, stop) where length = Base._range(start, nothing, stop, length)
+for (A,B,C) in Iterators.product( AnyNothing, AnyNothing, AnyNothing )
+    Base._range(start::A, step::Step, stop::B, length::C) = Base._range(start, step.step, stop, length)
+    if A != Nothing && C != Nothing
+        Base._range(start::A, step::B, stop::C, length::Length) = Base._range(start, step, stop, length.length == stop - start + 1 ? nothing : length.length)
+    else
+        Base._range(start::A, step::B, stop::C, length::Length) = Base._range(start, step, stop, length.length)
+    end
+end
 
-(:)(start, stop, ::Step{step}) where step = start:step:stop
-(:)(start::T, ::Step{step}, stop::T) where T<:Real where step = start:step:stop
-(:)(::Step{step}, start, stop) where step = start:step:stop
+for (A,B) in Iterators.product( AnyNothing, AnyNothing )
+    if A != Nothing && B != Nothing
+        Base._range(start::A, step::Step, stop::B, length::Length) = Base._range(start, step.step, stop, length.length == stop - start + 1 ? nothing : length.length)
+    else
+        Base._range(start::A, step::Step, stop::B, length::Length) = Base._range(start, step.step, stop, length.length)
+    end
+end
 
-(:)(start, stop, ::Step{1}) = start:stop
-(:)(start::T, ::Step{1}, stop::T) where T<:Real = start:stop
-(:)(::Step{1}, start, stop) = start:stop
+(::Base.Colon)(start, stop, length::Length) = Base._range(start, nothing, stop, length)
+(::Base.Colon)(start::T, length::Length, stop::T) where T<:Real = Base._range(start, nothing, stop, length)
+(::Base.Colon)(length::Length, start, stop) = Base._range(start, nothing, stop, length)
 
-Base.range(start, stop, ::Length{length}) where length = Base._range(start, nothing, stop, length)
-Base.range(start, stop, ::Step{step}) where step = Base._range(start, step, stop, nothing)
-Base.range(start, stop, ::Step{1}) where step = Base._range(start, nothing, stop, nothing)
+(::Base.Colon)(start, stop, ::Length{Nothing}) = Base._range(start, nothing, stop, nothing)
+(::Base.Colon)(start::T, ::Length{Nothing}, stop::T) where T<:Real = Base._range(start, nothing, stop, nothing)
+(::Base.Colon)(::Length{Nothing}, start, stop) = Base._range(start, nothing, stop, nothing)
 
-Base.range(::Length{length}, start, stop) where length = Base._range(start, nothing, stop, length)
-Base.range(start, ::Step{1}, stop) where step = Base._range(start, nothing, stop, nothing)
+(::Base.Colon)(start, stop, step::Step) = start:step.step.step:stop
+(::Base.Colon)(start::T, step::Step, stop::T) where T<:Real = start:step.step:stop
+(::Base.Colon)(step::Step, start, stop) = start:step.step.step:stop
+
+(::Base.Colon)(start, stop, ::Step{Nothing}) = start:stop
+(::Base.Colon)(start::T, ::Step{Nothing}, stop::T) where T<:Real = start:stop
+(::Base.Colon)(::Step{Nothing}, start, stop) = start:stop
+
+Base.range(start, stop, length::Length) = Base._range(start, nothing, stop, length)
+Base.range(start, length::Length, stop) = Base._range(start, nothing, stop, length)
+Base.range(length::Length, start, stop) = Base._range(start, nothing, stop, length)
+
+Base.range(start, stop, ::Length{Nothing}) = Base._range(start, nothing, stop, nothing)
+Base.range(start, ::Length{Nothing}, stop) = Base._range(start, nothing, stop, nothing)
+Base.range(::Length{Nothing}, start, stop) = Base._range(start, nothing, stop, nothing)
+
+Base.range(start, stop, step::Step) = Base._range(start, step, stop, nothing)
+Base.range(start, step::Step, stop) = Base._range(start, step, stop, nothing)
+Base.range(step::Step, start, stop) = Base._range(start, step, stop, nothing)
+Base.range(start::Number, step::Step, stop::T) where {T <:Integer} = Base._range(start, step, stop, nothing)
+
+Base.range(start, stop; length::Length) = Base._range(start, nothing, stop, length)
 
 # Use step and length methods to produce a new range with modifications
 
