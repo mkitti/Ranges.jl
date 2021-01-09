@@ -44,9 +44,9 @@ end
 (::Base.Colon)(start::T, ::Length{Nothing}, stop::T) where T<:Real = Base._range(start, nothing, stop, nothing)
 (::Base.Colon)(::Length{Nothing}, start, stop) = Base._range(start, nothing, stop, nothing)
 
-(::Base.Colon)(start, stop, step::Step) = start:step.step.step:stop
+(::Base.Colon)(start, stop, step::Step) = start:step.step:stop
 (::Base.Colon)(start::T, step::Step, stop::T) where T<:Real = start:step.step:stop
-(::Base.Colon)(step::Step, start, stop) = start:step.step.step:stop
+(::Base.Colon)(step::Step, start, stop) = start:step.step:stop
 
 (::Base.Colon)(start, stop, ::Step{Nothing}) = start:stop
 (::Base.Colon)(start::T, ::Step{Nothing}, stop::T) where T<:Real = start:stop
